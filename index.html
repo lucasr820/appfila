@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>SenhaFila</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SenhaFila">
+<meta name="theme-color" content="#111111">
+<link rel="apple-touch-icon" id="pwa-icon">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f0f0;
+  --surface: #ffffff;
+  --surface2: #f7f7f7;
+  --ink: #111111;
+  --ink2: #555555;
+  --ink3: #999999;
+  --green: #00875a;
+  --green-bg: #e3f5ef;
+  --red: #c0392b;
+  --red-bg: #fdecea;
+  --blue: #0052cc;
+  --blue-bg: #e8f0fe;
+  --orange-bg: rgba(255,160,0,.12);
+  --orange: #b06000;
+  --border: #e0e0e0;
+  --r: 14px;
+  --r-sm: 8px;
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+.phone {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* STATUS BAR */
+.statusbar {
+  background: var(--surface);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: max(14px, env(safe-area-inset-top)) 20px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+.sb-icons { display: flex; gap: 5px; align-items: center; }
+
+/* APP HEADER */
+.app-header {
+  background: var(--surface);
+  padding: 14px 20px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo-wrap { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 36px; height: 36px;
+  background: var(--ink);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 500;
+}
+.app-name { font-size: 18px; font-weight: 700; letter-spacing: -.3px; }
+.app-sub { font-size: 11px; color: var(--ink3); letter-spacing: .5px; text-transform: uppercase; }
+.hdr-next-wrap { text-align: right; }
+.hdr-next-num { font-family: var(--mono); font-size: 22px; font-weight: 500; color: var(--ink); }
+.hdr-next-lbl { font-size: 11px; color: var(--ink3); }
+
+/* CONTENT */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: calc(90px + env(safe-area-inset-bottom));
+  -webkit-overflow-scrolling: touch;
+}
+.content::-webkit-scrollbar { display: none; }
+
+/* SCREENS */
+.screen { display: none; }
+.screen.active { display: block; animation: fadeUp .22s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+/* ===== EMITIR SCREEN ===== */
+.gen-hero {
+  background: var(--ink);
+  margin: 14px 14px 0;
+  border-radius: 20px;
+  padding: 24px 22px 22px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+.gen-hero::after {
+  content: '';
+  position: absolute;
+  top: -50px; right: -50px;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.04);
+  pointer-events: none;
+}
+.gen-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 10px; }
+.gen-number {
+  font-family: var(--mono);
+  font-size: 68px;
+  font-weight: 500;
+  letter-spacing: -2px;
+  line-height: 1;
+  color: white;
+  min-height: 68px;
+}
+.gen-number.empty { color: rgba(255,255,255,.18); font-size: 44px; }
+.gen-status { font-size: 13px; color: rgba(255,255,255,.45); margin-top: 8px; }
+.gen-status strong { color: rgba(255,255,255,.8); }
+
+/* LAST ISSUED */
+.last-card {
+  display: none;
+  margin: 10px 14px 0;
+  background: var(--green-bg);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  align-items: center;
+  gap: 14px;
+  animation: popIn .3s cubic-bezier(.34,1.56,.64,1);
+}
+.last-card.show { display: flex; }
+@keyframes popIn { from { transform:scale(.9); opacity:0; } to { transform:scale(1); opacity:1; } }
+.last-num { font-family: var(--mono); font-size: 26px; font-weight: 500; color: var(--green); min-width: 58px; }
+.last-info { flex: 1; }
+.last-name { font-size: 15px; font-weight: 600; color: var(--green); }
+.last-sublabel { font-size: 12px; color: var(--green); opacity: .7; margin-top: 2px; }
+
+/* INPUT SECTION */
+.input-section {
+  margin: 12px 14px 0;
+  background: var(--surface);
+  border-radius: var(--r);
+  border: 1.5px solid var(--border);
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.input-section.error { border-color: var(--red); }
+.inp-row {
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--border);
+}
+.inp-row:last-child { border-bottom: none; }
+.inp-emoji { font-size: 18px; margin-right: 10px; flex-shrink: 0; }
+.inp-row input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 15px 0;
+  font-size: 16px;
+  font-family: var(--sans);
+  color: var(--ink);
+  background: transparent;
+}
+.inp-row input::placeholder { color: var(--ink3); }
+
+/* EMITIR BUTTON */
+.btn-emitir {
+  display: block;
+  width: calc(100% - 28px);
+  margin: 12px 14px 0;
+  padding: 17px;
+  background: var(--ink);
+  color: white;
+  border: none;
+  border-radius: var(--r);
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  letter-spacing: -.2px;
+}
+.btn-emitir:active { transform: scale(.98); }
+.btn-emitir.success { background: var(--green); }
+
+/* RESET LINK */
+.reset-link {
+  display: block;
+  text-align: center;
+  padding: 16px 0 0;
+  font-size: 13px;
+  color: var(--ink3);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: var(--sans);
+  text-decoration: underline;
+  width: 100%;
+}
+
+/* ===== FILA SCREEN ===== */
+.screen-header {
+  padding: 14px 14px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.screen-title { font-size: 22px; font-weight: 700; letter-spacing: -.3px; }
+.count-badge {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: var(--ink);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.search-wrap { padding: 0 14px 8px; }
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 10px 14px;
+}
+.search-box input {
+  flex: 1; border: none; outline: none;
+  font-size: 15px; font-family: var(--sans);
+  color: var(--ink); background: none;
+}
+.search-box input::placeholder { color: var(--ink3); }
+
+.filters {
+  display: flex;
+  gap: 8px;
+  padding: 0 14px 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.filters::-webkit-scrollbar { display: none; }
+.chip {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--ink2);
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: all .15s;
+}
+.chip.on { background: var(--ink); color: white; border-color: var(--ink); }
+
+.queue-list { padding: 0 14px; display: flex; flex-direction: column; gap: 8px; }
+
+.qi {
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: border-color .12s;
+}
+.qi:active { border-color: var(--ink); }
+.qi-num { font-family: var(--mono); font-size: 22px; font-weight: 500; min-width: 52px; }
+.qi-info { flex: 1; min-width: 0; }
+.qi-name { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.qi-time { font-size: 11px; color: var(--ink3); font-family: var(--mono); margin-top: 3px; }
+.qi-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: .3px; flex-shrink: 0; }
+.b-wait { background: var(--blue-bg); color: var(--blue); }
+.b-called { background: var(--orange-bg); color: var(--orange); }
+.b-done { background: var(--green-bg); color: var(--green); }
+.qi-del { background: none; border: none; color: var(--ink3); font-size: 20px; cursor: pointer; padding: 2px 4px; border-radius: 6px; line-height: 1; transition: color .12s, background .12s; }
+.qi-del:active { color: var(--red); background: var(--red-bg); }
+
+/* EMPTY */
+.empty { text-align: center; padding: 48px 24px; color: var(--ink3); }
+.empty-icon { font-size: 44px; margin-bottom: 10px; }
+.empty-title { font-size: 17px; font-weight: 600; color: var(--ink2); margin-bottom: 6px; }
+.empty-sub { font-size: 14px; line-height: 1.5; }
+
+/* ===== RESUMO SCREEN ===== */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px 14px 0; }
+.stat-card { background: var(--surface); border-radius: var(--r); padding: 16px 14px; border: 1.5px solid var(--border); }
+.stat-val { font-family: var(--mono); font-size: 34px; font-weight: 500; letter-spacing: -1px; line-height: 1; }
+.stat-lbl { font-size: 11px; color: var(--ink3); margin-top: 5px; text-transform: uppercase; letter-spacing: .5px; }
+
+.history-wrap { padding: 14px 14px 0; }
+.sec-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--ink3); margin-bottom: 10px; }
+.hist-list { display: flex; flex-direction: column; gap: 6px; }
+.hist-item { display: flex; align-items: center; gap: 12px; background: var(--surface); border-radius: var(--r-sm); padding: 12px 14px; border: 1.5px solid var(--border); }
+.hist-num { font-family: var(--mono); font-size: 18px; font-weight: 500; min-width: 44px; }
+.hist-name { font-size: 14px; font-weight: 600; flex: 1; }
+.hist-time { font-size: 11px; color: var(--ink3); font-family: var(--mono); margin-top: 2px; }
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: 430px;
+  background: rgba(255,255,255,.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding: 8px 0 calc(16px + env(safe-area-inset-bottom));
+  z-index: 50;
+}
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 0;
+  font-family: var(--sans);
+  transition: opacity .12s;
+}
+.nav-btn:active { opacity: .5; }
+.nav-icon { font-size: 22px; }
+.nav-lbl { font-size: 10px; font-weight: 600; color: var(--ink3); text-transform: uppercase; letter-spacing: .3px; }
+.nav-btn.on .nav-lbl { color: var(--ink); }
+
+/* MODAL */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 100;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+.modal-bg.open { display: flex; animation: fadeBg .2s ease; }
+@keyframes fadeBg { from { opacity:0; } to { opacity:1; } }
+.modal-sheet {
+  width: 100%;
+  max-width: 430px;
+  background: var(--surface);
+  border-radius: 22px 22px 0 0;
+  padding: 20px 18px calc(28px + env(safe-area-inset-bottom));
+  animation: slideUp .28s cubic-bezier(.32,1,.55,1);
+}
+@keyframes slideUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
+.modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 18px; }
+.modal-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.modal-sub { font-size: 14px; color: var(--ink3); margin-bottom: 18px; font-family: var(--mono); }
+
+.status-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.s-opt {
+  flex: 1;
+  padding: 11px 6px;
+  border-radius: var(--r-sm);
+  border: 1.5px solid var(--border);
+  background: none;
+  color: var(--ink2);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--sans);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  transition: all .15s;
+}
+.s-opt.sel-aguardando { background: var(--blue-bg); border-color: var(--blue); color: var(--blue); }
+.s-opt.sel-chamado { background: var(--orange-bg); border-color: var(--orange); color: var(--orange); }
+.s-opt.sel-concluido { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+
+.m-btn {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  border-radius: var(--r);
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--sans);
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity .12s;
+}
+.m-btn:active { opacity: .75; }
+.m-confirm { background: var(--ink); color: white; }
+.m-danger { background: var(--red-bg); color: var(--red); }
+.m-cancel { background: var(--surface2); color: var(--ink2); }
+
+/* INSTALL BANNER */
+.install-banner {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 200;
+  background: #1a1a1a;
+  color: white;
+  padding: 16px 18px calc(20px + env(safe-area-inset-bottom));
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid #333;
+  animation: slideUp .3s ease;
+}
+.install-banner.show { display: flex; }
+.ib-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ib-logo { width: 44px; height: 44px; background: #333; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 20px; font-weight: 700; }
+.ib-close { background: none; border: none; color: #888; font-size: 24px; cursor: pointer; padding: 0; line-height: 1; }
+.ib-steps { font-size: 13px; color: #ccc; line-height: 1.7; background: #2a2a2a; border-radius: 10px; padding: 12px 14px; }
+.ib-steps strong { color: white; }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: calc(90px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: white;
+  padding: 11px 20px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 300;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .2s, transform .2s;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px); }
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- STATUS BAR -->
+  <div class="statusbar">
+    <span id="sb-time">9:41</span>
+    <div class="sb-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor">
+        <rect x="0" y="7" width="3" height="5" rx="1" opacity=".4"/>
+        <rect x="4" y="4" width="3" height="8" rx="1" opacity=".6"/>
+        <rect x="8" y="1" width="3" height="11" rx="1"/>
+        <rect x="12" y="0" width="5" height="12" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+        <rect x="13" y="1.5" width="2" height="9" rx=".5"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- APP HEADER -->
+  <div class="app-header">
+    <div class="logo-wrap">
+      <div class="logo-mark">#</div>
+      <div>
+        <div class="app-name">SenhaFila</div>
+        <div class="app-sub">Controle de Senhas</div>
+      </div>
+    </div>
+    <div class="hdr-next-wrap">
+      <div class="hdr-next-num" id="hdr-num">001</div>
+      <div class="hdr-next-lbl">próxima</div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ======= EMITIR ======= -->
+    <div class="screen active" id="sc-emitir">
+
+      <div class="gen-hero">
+        <div class="gen-label">Senha Atual</div>
+        <div class="gen-number empty" id="gen-num">—</div>
+        <div class="gen-status">
+          <strong id="gen-total">0</strong> emitidas · última: <strong id="gen-ultima">nenhuma</strong>
+        </div>
+      </div>
+
+      <div class="last-card" id="last-card">
+        <div class="last-num" id="last-num">000</div>
+        <div class="last-info">
+          <div class="last-name" id="last-name">—</div>
+          <div class="last-sublabel">Senha emitida agora ✓</div>
+        </div>
+      </div>
+
+      <div class="input-section" id="input-section">
+        <div class="inp-row">
+          <div class="inp-emoji">👤</div>
+          <input id="inp-nome" type="text" placeholder="Nome completo" autocomplete="off" autocorrect="off">
+        </div>
+        <div class="inp-row">
+          <div class="inp-emoji">📝</div>
+          <input id="inp-obs" type="text" placeholder="Observação (opcional)" autocomplete="off">
+        </div>
+      </div>
+
+      <button class="btn-emitir" id="btn-emitir" onclick="emitir()">
+        Emitir Próxima Senha →
+      </button>
+
+      <button class="reset-link" onclick="abrirReset()">Reiniciar contagem</button>
+
+    </div>
+
+    <!-- ======= FILA ======= -->
+    <div class="screen" id="sc-fila">
+      <div class="screen-header">
+        <div class="screen-title">Fila</div>
+        <div class="count-badge" id="fila-count">0</div>
+      </div>
+      <div class="search-wrap">
+        <div class="search-box">
+          <span style="color:var(--ink3)">🔍</span>
+          <input type="text" placeholder="Buscar nome ou número..." oninput="buscar(this.value)" id="inp-busca" autocomplete="off">
+        </div>
+      </div>
+      <div class="filters">
+        <div class="chip on" id="chip-todos" onclick="filtrar('todos', this)">Todos</div>
+        <div class="chip" id="chip-aguardando" onclick="filtrar('aguardando', this)">Aguardando</div>
+        <div class="chip" id="chip-chamado" onclick="filtrar('chamado', this)">Chamado</div>
+        <div class="chip" id="chip-concluido" onclick="filtrar('concluido', this)">Concluído</div>
+      </div>
+      <div class="queue-list" id="queue-list"></div>
+    </div>
+
+    <!-- ======= RESUMO ======= -->
+    <div class="screen" id="sc-resumo">
+      <div class="screen-header">
+        <div class="screen-title">Resumo</div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-val" id="st-total" style="color:var(--ink)">0</div>
+          <div class="stat-lbl">Total</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="st-wait" style="color:var(--blue)">0</div>
+          <div class="stat-lbl">Aguardando</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="st-called" style="color:var(--orange)">0</div>
+          <div class="stat-lbl">Chamados</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="st-done" style="color:var(--green)">0</div>
+          <div class="stat-lbl">Concluídos</div>
+        </div>
+      </div>
+      <div class="history-wrap">
+        <div class="sec-title">Histórico</div>
+        <div class="hist-list" id="hist-list"></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn on" id="nav-emitir" onclick="goTo('emitir')">
+      <div class="nav-icon">🎫</div>
+      <div class="nav-lbl">Emitir</div>
+    </button>
+    <button class="nav-btn" id="nav-fila" onclick="goTo('fila')">
+      <div class="nav-icon">📋</div>
+      <div class="nav-lbl">Fila</div>
+    </button>
+    <button class="nav-btn" id="nav-resumo" onclick="goTo('resumo')">
+      <div class="nav-icon">📊</div>
+      <div class="nav-lbl">Resumo</div>
+    </button>
+  </nav>
+
+</div><!-- /phone -->
+
+<!-- MODAL EDITAR STATUS -->
+<div class="modal-bg" id="modal-edit">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="m-title">Senha #001</div>
+    <div class="modal-sub" id="m-sub">Nome</div>
+    <div class="status-row">
+      <button class="s-opt" id="sopt-aguardando" onclick="selecionarStatus('aguardando')">⏳ Aguardando</button>
+      <button class="s-opt" id="sopt-chamado" onclick="selecionarStatus('chamado')">📢 Chamado</button>
+      <button class="s-opt" id="sopt-concluido" onclick="selecionarStatus('concluido')">✅ Concluído</button>
+    </div>
+    <button class="m-btn m-confirm" onclick="salvarStatus()">Salvar</button>
+    <button class="m-btn m-danger" onclick="excluirItem()">🗑 Excluir Senha</button>
+    <button class="m-btn m-cancel" onclick="fecharEdit()">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL RESET -->
+<div class="modal-bg" id="modal-reset">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Reiniciar Contagem?</div>
+    <p style="font-size:14px;color:var(--ink2);margin-bottom:20px;line-height:1.6">
+      Vai zerar o contador e apagar <strong>toda a fila</strong>. Esta ação não pode ser desfeita.
+    </p>
+    <button class="m-btn m-danger" onclick="executarReset()">Sim, reiniciar do zero</button>
+    <button class="m-btn m-cancel" onclick="fecharReset()">Cancelar</button>
+  </div>
+</div>
+
+<!-- INSTALL BANNER -->
+<div class="install-banner" id="install-banner">
+  <div class="ib-top">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="ib-logo">#</div>
+      <div>
+        <div style="font-weight:700;font-size:15px">Instalar SenhaFila</div>
+        <div style="font-size:12px;color:#aaa;margin-top:2px">Adicionar à Tela Inicial</div>
+      </div>
+    </div>
+    <button class="ib-close" onclick="fecharBanner()">×</button>
+  </div>
+  <div class="ib-steps">
+    1. Toque em <strong>Compartilhar ⬆</strong> no Safari<br>
+    2. Role e toque em <strong>"Adicionar à Tela Inicial"</strong><br>
+    3. Confirme e abra pelo ícone na tela inicial
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// =============================================
+// STATE
+// =============================================
+let fila = [];
+let contador = 1;
+let filtroAtivo = 'todos';
+let buscaAtiva = '';
+let editandoId = null;
+let statusEdit = 'aguardando';
+
+// =============================================
+// UTILS
+// =============================================
+function pad(n) { return String(n).padStart(3, '0'); }
+
+function horaAgora() {
+  return new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
+
+function salvar() {
+  try {
+    localStorage.setItem('sf_fila', JSON.stringify(fila));
+    localStorage.setItem('sf_contador', String(contador));
+  } catch(e) {}
+}
+
+function carregar() {
+  try {
+    const f = localStorage.getItem('sf_fila');
+    const c = localStorage.getItem('sf_contador');
+    if (f) fila = JSON.parse(f);
+    if (c) contador = parseInt(c) || 1;
+  } catch(e) {}
+}
+
+// =============================================
+// NAV
+// =============================================
+function goTo(tab) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('on'));
+  document.getElementById('sc-' + tab).classList.add('active');
+  document.getElementById('nav-' + tab).classList.add('on');
+  if (tab === 'fila') renderFila();
+  if (tab === 'resumo') renderResumo();
+}
+
+// =============================================
+// EMITIR
+// =============================================
+function emitir() {
+  const nome = document.getElementById('inp-nome').value.trim();
+  const obs  = document.getElementById('inp-obs').value.trim();
+
+  if (!nome) {
+    const sec = document.getElementById('input-section');
+    sec.classList.add('error');
+    setTimeout(() => sec.classList.remove('error'), 1000);
+    toast('⚠️ Informe o nome do usuário');
+    return;
+  }
+
+  const item = {
+    id: Date.now(),
+    num: pad(contador),
+    numInt: contador,
+    nome: nome,
+    obs: obs,
+    status: 'aguardando',
+    hora: horaAgora()
+  };
+
+  fila.unshift(item);
+  contador++;
+  salvar();
+
+  // Update UI
+  document.getElementById('gen-num').textContent = item.num;
+  document.getElementById('gen-num').classList.remove('empty');
+  document.getElementById('gen-total').textContent = fila.length;
+  document.getElementById('gen-ultima').textContent = nome.split(' ')[0];
+  document.getElementById('hdr-num').textContent = pad(contador);
+
+  // Last card
+  document.getElementById('last-num').textContent = item.num;
+  document.getElementById('last-name').textContent = nome;
+  const lc = document.getElementById('last-card');
+  lc.classList.remove('show');
+  void lc.offsetWidth; // force reflow
+  lc.classList.add('show');
+
+  // Clear inputs
+  document.getElementById('inp-nome').value = '';
+  document.getElementById('inp-obs').value = '';
+
+  // Button feedback
+  const btn = document.getElementById('btn-emitir');
+  btn.textContent = '✓ Senha ' + item.num + ' emitida!';
+  btn.classList.add('success');
+  setTimeout(() => {
+    btn.textContent = 'Emitir Próxima Senha →';
+    btn.classList.remove('success');
+  }, 1800);
+
+  toast('✅ Senha ' + item.num + ' → ' + nome.split(' ')[0]);
+}
+
+// =============================================
+// FILA
+// =============================================
+function renderFila() {
+  document.getElementById('fila-count').textContent = fila.length;
+  const el = document.getElementById('queue-list');
+
+  let lista = [...fila];
+  if (filtroAtivo !== 'todos') lista = lista.filter(i => i.status === filtroAtivo);
+  if (buscaAtiva) {
+    const q = buscaAtiva.toLowerCase();
+    lista = lista.filter(i => i.nome.toLowerCase().includes(q) || i.num.includes(q));
+  }
+
+  if (!lista.length) {
+    const vazia = filtroAtivo === 'todos' && !buscaAtiva;
+    el.innerHTML = '<div class="empty">' +
+      '<div class="empty-icon">' + (vazia ? '🎫' : '🔍') + '</div>' +
+      '<div class="empty-title">' + (vazia ? 'Fila vazia' : 'Nada encontrado') + '</div>' +
+      '<div class="empty-sub">' + (vazia ? 'Emita senhas na tela Emitir.' : 'Tente outro filtro ou busca.') + '</div>' +
+      '</div>';
+    return;
+  }
+
+  const badgeClass = { aguardando: 'b-wait', chamado: 'b-called', concluido: 'b-done' };
+  const badgeLabel = { aguardando: 'Aguardando', chamado: 'Chamado', concluido: 'Concluído' };
+
+  el.innerHTML = lista.map(function(item) {
+    return '<div class="qi" onclick="abrirEdit(' + item.id + ')">' +
+      '<div class="qi-num">' + item.num + '</div>' +
+      '<div class="qi-info">' +
+        '<div class="qi-name">' + item.nome + '</div>' +
+        '<div class="qi-time">' + item.hora + (item.obs ? ' · ' + item.obs : '') + '</div>' +
+      '</div>' +
+      '<span class="qi-badge ' + badgeClass[item.status] + '">' + badgeLabel[item.status] + '</span>' +
+      '<button class="qi-del" onclick="event.stopPropagation(); excluirDireto(' + item.id + ')">×</button>' +
+    '</div>';
+  }).join('');
+}
+
+function filtrar(f, el) {
+  filtroAtivo = f;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  renderFila();
+}
+
+function buscar(q) {
+  buscaAtiva = q;
+  renderFila();
+}
+
+// =============================================
+// RESUMO
+// =============================================
+function renderResumo() {
+  const total   = fila.length;
+  const wait    = fila.filter(i => i.status === 'aguardando').length;
+  const called  = fila.filter(i => i.status === 'chamado').length;
+  const done    = fila.filter(i => i.status === 'concluido').length;
+
+  document.getElementById('st-total').textContent  = total;
+  document.getElementById('st-wait').textContent   = wait;
+  document.getElementById('st-called').textContent = called;
+  document.getElementById('st-done').textContent   = done;
+
+  const badgeClass = { aguardando: 'b-wait', chamado: 'b-called', concluido: 'b-done' };
+  const badgeLabel = { aguardando: 'Aguardando', chamado: 'Chamado', concluido: 'Concluído' };
+
+  const hl = document.getElementById('hist-list');
+  if (!fila.length) {
+    hl.innerHTML = '<div style="color:var(--ink3);font-size:14px;padding:8px 0">Nenhuma senha emitida.</div>';
+    return;
+  }
+  const sorted = [...fila].sort((a, b) => a.numInt - b.numInt);
+  hl.innerHTML = sorted.map(function(item) {
+    return '<div class="hist-item">' +
+      '<div class="hist-num">' + item.num + '</div>' +
+      '<div style="flex:1">' +
+        '<div class="hist-name">' + item.nome + '</div>' +
+        '<div class="hist-time">' + item.hora + '</div>' +
+      '</div>' +
+      '<span class="qi-badge ' + badgeClass[item.status] + '">' + badgeLabel[item.status] + '</span>' +
+    '</div>';
+  }).join('');
+}
+
+// =============================================
+// MODAL EDITAR
+// =============================================
+function abrirEdit(id) {
+  editandoId = id;
+  const item = fila.find(function(i) { return i.id === id; });
+  if (!item) return;
+  document.getElementById('m-title').textContent = 'Senha #' + item.num;
+  document.getElementById('m-sub').textContent = item.nome + (item.obs ? ' · ' + item.obs : '');
+  statusEdit = item.status;
+  atualizarBotoes();
+  document.getElementById('modal-edit').classList.add('open');
+}
+
+function fecharEdit() {
+  document.getElementById('modal-edit').classList.remove('open');
+}
+
+function selecionarStatus(s) {
+  statusEdit = s;
+  atualizarBotoes();
+}
+
+function atualizarBotoes() {
+  ['aguardando', 'chamado', 'concluido'].forEach(function(s) {
+    const btn = document.getElementById('sopt-' + s);
+    btn.className = 's-opt' + (statusEdit === s ? ' sel-' + s : '');
+  });
+}
+
+function salvarStatus() {
+  const item = fila.find(function(i) { return i.id === editandoId; });
+  if (item) { item.status = statusEdit; }
+  salvar();
+  fecharEdit();
+  renderFila();
+  renderResumo();
+  toast('✅ Status atualizado');
+}
+
+function excluirItem() {
+  fila = fila.filter(function(i) { return i.id !== editandoId; });
+  salvar();
+  fecharEdit();
+  renderFila();
+  atualizarEmitirUI();
+  toast('🗑 Senha removida');
+}
+
+function excluirDireto(id) {
+  fila = fila.filter(function(i) { return i.id !== id; });
+  salvar();
+  renderFila();
+  atualizarEmitirUI();
+  toast('🗑 Removido');
+}
+
+// =============================================
+// MODAL RESET
+// =============================================
+function abrirReset() {
+  document.getElementById('modal-reset').classList.add('open');
+}
+
+function fecharReset() {
+  document.getElementById('modal-reset').classList.remove('open');
+}
+
+function executarReset() {
+  fila = [];
+  contador = 1;
+  salvar();
+  fecharReset();
+  document.getElementById('gen-num').textContent = '—';
+  document.getElementById('gen-num').classList.add('empty');
+  document.getElementById('gen-total').textContent = '0';
+  document.getElementById('gen-ultima').textContent = 'nenhuma';
+  document.getElementById('hdr-num').textContent = '001';
+  document.getElementById('last-card').classList.remove('show');
+  renderFila();
+  toast('🔄 Contagem reiniciada');
+}
+
+// Close modals by clicking backdrop
+document.getElementById('modal-edit').addEventListener('click', function(e) {
+  if (e.target === this) fecharEdit();
+});
+document.getElementById('modal-reset').addEventListener('click', function(e) {
+  if (e.target === this) fecharReset();
+});
+
+// =============================================
+// INSTALL BANNER
+// =============================================
+function fecharBanner() {
+  document.getElementById('install-banner').classList.remove('show');
+  try { localStorage.setItem('sf_banner', '1'); } catch(e) {}
+}
+
+// =============================================
+// TOAST
+// =============================================
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2200);
+}
+
+// =============================================
+// ATUALIZAR UI EMITIR
+// =============================================
+function atualizarEmitirUI() {
+  document.getElementById('gen-total').textContent = fila.length;
+  document.getElementById('hdr-num').textContent = pad(contador);
+  if (fila.length > 0) {
+    document.getElementById('gen-num').textContent = pad(contador - 1);
+    document.getElementById('gen-num').classList.remove('empty');
+    document.getElementById('gen-ultima').textContent = fila[0].nome.split(' ')[0];
+  } else {
+    document.getElementById('gen-num').textContent = '—';
+    document.getElementById('gen-num').classList.add('empty');
+    document.getElementById('gen-ultima').textContent = 'nenhuma';
+  }
+}
+
+// =============================================
+// RELÓGIO
+// =============================================
+function atualizarRelogio() {
+  const d = new Date();
+  const h = d.getHours().toString().padStart(2,'0');
+  const m = d.getMinutes().toString().padStart(2,'0');
+  const el = document.getElementById('sb-time');
+  if (el) el.textContent = h + ':' + m;
+}
+atualizarRelogio();
+setInterval(atualizarRelogio, 10000);
+
+// =============================================
+// ÍCONE PWA
+// =============================================
+(function() {
+  try {
+    const c = document.createElement('canvas');
+    c.width = 180; c.height = 180;
+    const ctx = c.getContext('2d');
+    const r2 = 36;
+    ctx.beginPath();
+    ctx.moveTo(r2,0); ctx.lineTo(180-r2,0);
+    ctx.arcTo(180,0,180,r2,r2);
+    ctx.lineTo(180,180-r2);
+    ctx.arcTo(180,180,180-r2,180,r2);
+    ctx.lineTo(r2,180);
+    ctx.arcTo(0,180,0,180-r2,r2);
+    ctx.lineTo(0,r2);
+    ctx.arcTo(0,0,r2,0,r2);
+    ctx.closePath();
+    ctx.fillStyle = '#111111';
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 88px monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('#', 90, 96);
+    const icon = document.getElementById('pwa-icon');
+    if (icon) icon.href = c.toDataURL('image/png');
+  } catch(e) {}
+})();
+
+// =============================================
+// INIT — carregar dados e atualizar tela
+// =============================================
+carregar();
+atualizarEmitirUI();
+renderFila();
+
+// Mostrar banner de instalação no Safari iOS
+(function() {
+  try {
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent.toLowerCase());
+    const isStandalone = window.navigator.standalone === true;
+    const jaViu = localStorage.getItem('sf_banner');
+    if (isIOS && !isStandalone && !jaViu) {
+      document.getElementById('install-banner').classList.add('show');
+    }
+  } catch(e) {}
+})();
+
+// Enter nos inputs
+document.getElementById('inp-nome').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('inp-obs').focus();
+});
+document.getElementById('inp-obs').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') emitir();
+});
+</script>
+</body>
+</html>
