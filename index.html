@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" id="pwa-icon">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
+:root{
   --bg:#f1f5f9; --surface:#fff; --surface2:#f8fafc;
   --ink:#0f172a; --ink2:#475569; --ink3:#94a3b8;
   --green:#059669; --green-bg:#ecfdf5;
@@ -27,32 +27,134 @@
 body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;display:flex;justify-content:center}
 .phone{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column}
 
-/* STATUS BAR */
-.statusbar{background:var(--ink);display:flex;justify-content:space-between;align-items:center;padding:max(14px,env(safe-area-inset-top)) 20px 8px;font-size:13px;font-weight:600;color:white}
+/* ══════════════════════════════════
+   TELA DE LOGIN
+══════════════════════════════════ */
+#tela-login{
+  position:fixed;inset:0;z-index:1000;
+  background:var(--ink);
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:32px 28px;
+  overflow-y:auto;
+}
+#tela-login.hide{display:none}
 
-/* APP HEADER */
-.app-header{background:var(--ink);padding:0 20px 16px;display:flex;align-items:center;justify-content:space-between}
-.logo-row{display:flex;align-items:center;gap:10px}
-.logo-mark{width:38px;height:38px;background:rgba(255,255,255,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-family:var(--mono);font-size:17px}
-.app-name{font-size:17px;font-weight:700;color:white;letter-spacing:-.3px}
-.app-sub{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.8px;text-transform:uppercase;margin-top:1px}
-.hdr-num{font-family:var(--mono);font-size:24px;font-weight:500;color:white}
-.hdr-lbl{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.5px;text-transform:uppercase;text-align:right}
+.login-logo{
+  width:68px;height:68px;
+  background:rgba(255,255,255,.1);
+  border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:30px;color:white;
+  margin-bottom:22px;
+}
+.login-title{font-size:26px;font-weight:700;color:white;letter-spacing:-.5px;text-align:center;margin-bottom:6px}
+.login-sub{font-size:14px;color:rgba(255,255,255,.4);text-align:center;margin-bottom:36px}
 
-/* CONTENT */
+/* abas login / cadastro */
+.login-tabs{display:flex;width:100%;max-width:360px;background:rgba(255,255,255,.06);border-radius:10px;padding:4px;margin-bottom:24px}
+.login-tab{flex:1;padding:10px;border:none;border-radius:7px;background:transparent;color:rgba(255,255,255,.4);font-size:14px;font-weight:600;font-family:var(--sans);cursor:pointer;transition:all .2s}
+.login-tab.on{background:rgba(255,255,255,.12);color:white}
+
+.login-form{width:100%;max-width:360px;display:flex;flex-direction:column;gap:10px}
+.login-input{
+  width:100%;padding:15px 16px;
+  background:rgba(255,255,255,.07);
+  border:1.5px solid rgba(255,255,255,.12);
+  border-radius:var(--r);
+  font-size:16px;font-family:var(--sans);color:white;outline:none;
+  transition:border-color .2s;
+}
+.login-input::placeholder{color:rgba(255,255,255,.25)}
+.login-input:focus{border-color:rgba(255,255,255,.35)}
+.login-input.err{border-color:var(--red)}
+
+.btn-login{
+  width:100%;padding:16px;margin-top:4px;
+  background:white;color:var(--ink);
+  border:none;border-radius:var(--r);
+  font-size:16px;font-weight:700;font-family:var(--sans);
+  cursor:pointer;transition:background .15s,transform .1s;
+  letter-spacing:-.2px;
+}
+.btn-login:active{transform:scale(.98);background:#e2e8f0}
+.btn-login:disabled{opacity:.5;cursor:default}
+
+.login-erro{
+  font-size:13px;color:#fca5a5;text-align:center;
+  padding:10px 14px;background:rgba(220,38,38,.15);
+  border-radius:var(--r-sm);margin-top:4px;display:none;
+  line-height:1.5;
+}
+.login-erro.show{display:block}
+
+.login-sep{width:100%;max-width:360px;display:flex;align-items:center;gap:12px;margin:6px 0}
+.login-sep-line{flex:1;height:1px;background:rgba(255,255,255,.1)}
+.login-sep-txt{font-size:12px;color:rgba(255,255,255,.25)}
+
+/* ══════════════════════════════════
+   STATUS BAR
+══════════════════════════════════ */
+.statusbar{
+  background:var(--ink);
+  display:flex;justify-content:space-between;align-items:center;
+  padding:max(14px,env(safe-area-inset-top)) 20px 8px;
+  font-size:13px;font-weight:600;color:white;
+}
+
+/* ══════════════════════════════════
+   APP HEADER
+══════════════════════════════════ */
+.app-header{
+  background:var(--ink);
+  padding:0 20px 14px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo-row{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.logo-mark{
+  width:36px;height:36px;background:rgba(255,255,255,.12);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  color:white;font-family:var(--mono);font-size:15px;flex-shrink:0;
+}
+.app-name{font-size:16px;font-weight:700;color:white;letter-spacing:-.3px}
+.app-email{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr-right{text-align:right;flex-shrink:0}
+.hdr-num{font-family:var(--mono);font-size:22px;font-weight:500;color:white}
+.hdr-lbl{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px}
+.btn-sair{
+  background:rgba(255,255,255,.08);border:none;
+  color:rgba(255,255,255,.5);font-size:11px;font-family:var(--sans);font-weight:600;
+  padding:5px 9px;border-radius:6px;cursor:pointer;margin-top:4px;
+  letter-spacing:.3px;transition:background .15s;
+}
+.btn-sair:active{background:rgba(255,255,255,.15)}
+
+/* ══════════════════════════════════
+   CONTENT / SCREENS
+══════════════════════════════════ */
 .content{flex:1;overflow-y:auto;padding-bottom:calc(88px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
 .content::-webkit-scrollbar{display:none}
-
-/* SCREENS */
 .screen{display:none}
 .screen.active{display:block;animation:fadeUp .22s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── EMITIR ── */
-.hero{background:var(--ink);margin:14px 14px 0;border-radius:20px;padding:22px 22px 20px;color:white;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 85% 20%,rgba(99,102,241,.2) 0%,transparent 60%);pointer-events:none}
+/* ══════════════════════════════════
+   HERO (EMITIR)
+══════════════════════════════════ */
+.hero{
+  background:var(--ink);margin:14px 14px 0;border-radius:20px;
+  padding:22px 22px 20px;color:white;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 85% 20%,rgba(99,102,241,.2) 0%,transparent 60%);
+  pointer-events:none;
+}
 .hero-lbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:8px}
-.hero-num{font-family:var(--mono);font-size:72px;font-weight:500;letter-spacing:-3px;line-height:1;color:white;min-height:72px;display:flex;align-items:center}
+.hero-num{
+  font-family:var(--mono);font-size:72px;font-weight:500;
+  letter-spacing:-3px;line-height:1;color:white;
+  min-height:72px;display:flex;align-items:center;
+}
 .hero-num.empty{color:rgba(255,255,255,.15);font-size:46px;letter-spacing:-1px}
 .hero-stats{font-size:12px;color:rgba(255,255,255,.4);margin-top:10px}
 .hero-stats strong{color:rgba(255,255,255,.75)}
@@ -72,12 +174,21 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 .inp-row input{flex:1;border:none;outline:none;padding:15px 0;font-size:16px;font-family:var(--sans);color:var(--ink);background:transparent}
 .inp-row input::placeholder{color:var(--ink3)}
 
-.btn-emit{display:block;width:calc(100% - 28px);margin:12px 14px 0;padding:17px;background:var(--ink);color:white;border:none;border-radius:var(--r);font-size:16px;font-weight:700;font-family:var(--sans);cursor:pointer;letter-spacing:-.2px;box-shadow:0 4px 14px rgba(15,23,42,.25);transition:background .15s,transform .1s}
+.btn-emit{
+  display:block;width:calc(100% - 28px);margin:12px 14px 0;padding:17px;
+  background:var(--ink);color:white;border:none;border-radius:var(--r);
+  font-size:16px;font-weight:700;font-family:var(--sans);cursor:pointer;
+  letter-spacing:-.2px;box-shadow:0 4px 14px rgba(15,23,42,.25);
+  transition:background .15s,transform .1s;
+}
 .btn-emit:active{transform:scale(.98)}
 .btn-emit.ok{background:var(--green)}
+.btn-emit:disabled{opacity:.6;cursor:default}
 .btn-reset-link{display:block;text-align:center;padding:14px 0 0;font-size:12px;color:var(--ink3);cursor:pointer;background:none;border:none;font-family:var(--sans);text-decoration:underline;width:100%}
 
-/* ── FILA ── */
+/* ══════════════════════════════════
+   FILA
+══════════════════════════════════ */
 .sc-hdr{padding:14px 14px 8px;display:flex;align-items:center;justify-content:space-between}
 .sc-title{font-size:22px;font-weight:700;letter-spacing:-.4px}
 .sc-badge{font-family:var(--mono);font-size:12px;background:var(--ink);color:white;padding:4px 11px;border-radius:20px}
@@ -107,13 +218,15 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 .empty-title{font-size:17px;font-weight:600;color:var(--ink2);margin-bottom:6px}
 .empty-sub{font-size:13px;line-height:1.6}
 
-/* ── RELATÓRIO ── */
+/* ══════════════════════════════════
+   RELATÓRIO
+══════════════════════════════════ */
 .rel-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 14px 0}
 .stat-card{background:var(--surface);border-radius:var(--r);padding:16px 14px;border:1.5px solid var(--border);box-shadow:var(--sh)}
 .stat-val{font-family:var(--mono);font-size:34px;font-weight:500;letter-spacing:-1px;line-height:1}
 .stat-lbl{font-size:10px;color:var(--ink3);margin-top:5px;text-transform:uppercase;letter-spacing:.7px}
 .rel-actions{display:flex;gap:8px;padding:12px 14px 0}
-.btn-rel{flex:1;padding:13px 8px;border-radius:var(--r-sm);border:1.5px solid var(--border);background:var(--surface);color:var(--ink2);font-size:13px;font-weight:600;font-family:var(--sans);cursor:pointer;text-align:center;transition:all .15s;box-shadow:var(--sh)}
+.btn-rel{flex:1;padding:13px 8px;border-radius:var(--r-sm);border:1.5px solid var(--border);background:var(--surface);color:var(--ink2);font-size:13px;font-weight:600;font-family:var(--sans);cursor:pointer;text-align:center;box-shadow:var(--sh);transition:all .15s}
 .btn-rel:active{background:var(--surface2)}
 .btn-rel.primary{background:var(--ink);color:white;border-color:var(--ink)}
 .hist-wrap{padding:14px 14px 0}
@@ -125,14 +238,18 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 .hist-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hist-time{font-size:11px;color:var(--ink3);font-family:var(--mono);margin-top:2px}
 
-/* ── LOADING ── */
+/* ══════════════════════════════════
+   LOADING
+══════════════════════════════════ */
 .loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px}
 .loading-overlay.hide{display:none}
 .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--ink);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-txt{font-size:13px;color:var(--ink3)}
 
-/* ── NAV ── */
+/* ══════════════════════════════════
+   NAV
+══════════════════════════════════ */
 .bottom-nav{position:fixed;bottom:0;width:100%;max-width:430px;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;padding:8px 0 calc(14px + env(safe-area-inset-bottom));z-index:50}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:6px 0;font-family:var(--sans);transition:opacity .12s}
 .nav-btn:active{opacity:.5}
@@ -140,7 +257,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 .nav-lbl{font-size:10px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.3px}
 .nav-btn.on .nav-lbl{color:var(--ink)}
 
-/* ── MODAL ── */
+/* ══════════════════════════════════
+   MODAL
+══════════════════════════════════ */
 .modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:100;display:none;align-items:flex-end;justify-content:center}
 .modal-bg.open{display:flex;animation:fadein .2s ease}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
@@ -160,22 +279,40 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 .m-danger{background:var(--red-bg);color:var(--red)}
 .m-cancel{background:var(--surface2);color:var(--ink2)}
 
-/* ── TOAST ── */
+/* ══════════════════════════════════
+   TOAST
+══════════════════════════════════ */
 .toast{position:fixed;bottom:calc(88px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--ink);color:white;padding:11px 20px;border-radius:50px;font-size:13px;font-weight:600;white-space:nowrap;z-index:400;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s;box-shadow:0 4px 20px rgba(0,0,0,.25)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
-
-/* ── INSTALL BANNER ── */
-.install-banner{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--ink);color:white;padding:16px 18px calc(20px + env(safe-area-inset-bottom));flex-direction:column;gap:10px;border-top:1px solid rgba(255,255,255,.1);animation:slideup .3s ease}
-.install-banner.show{display:flex}
-.ib-row{display:flex;align-items:center;justify-content:space-between}
-.ib-info{display:flex;align-items:center;gap:12px}
-.ib-logo{width:42px;height:42px;background:rgba(255,255,255,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:18px}
-.ib-close{background:none;border:none;color:rgba(255,255,255,.5);font-size:24px;cursor:pointer;padding:0;line-height:1}
-.ib-steps{font-size:13px;color:rgba(255,255,255,.6);line-height:1.7;background:rgba(255,255,255,.07);border-radius:10px;padding:12px 14px}
-.ib-steps strong{color:white}
 </style>
 </head>
 <body>
+
+<!-- ══════════════════════════════════
+     TELA DE LOGIN
+══════════════════════════════════ -->
+<div id="tela-login">
+  <div class="login-logo">#</div>
+  <div class="login-title">Controle de Fila</div>
+  <div class="login-sub">Acesse sua fila de senhas</div>
+
+  <div class="login-tabs">
+    <button class="login-tab on" id="tab-entrar" onclick="mudarAba('entrar')">Entrar</button>
+    <button class="login-tab"   id="tab-criar"   onclick="mudarAba('criar')">Criar Conta</button>
+  </div>
+
+  <div class="login-form">
+    <input class="login-input" id="inp-email" type="email"    placeholder="seu@email.com" autocomplete="email">
+    <input class="login-input" id="inp-senha" type="password" placeholder="Senha" autocomplete="current-password">
+    <input class="login-input" id="inp-senha2" type="password" placeholder="Confirmar senha" autocomplete="new-password" style="display:none">
+    <div class="login-erro" id="login-erro"></div>
+    <button class="btn-login" id="btn-login" onclick="autenticar()">Entrar</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     APP PRINCIPAL
+══════════════════════════════════ -->
 <div class="phone">
 
   <div class="statusbar">
@@ -191,14 +328,15 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
   <div class="app-header">
     <div class="logo-row">
       <div class="logo-mark">#</div>
-      <div>
+      <div style="min-width:0">
         <div class="app-name">Controle de Fila</div>
-        <div class="app-sub">Gerenciador de Senhas</div>
+        <div class="app-email" id="app-email-label">—</div>
       </div>
     </div>
-    <div>
+    <div class="hdr-right">
       <div class="hdr-num" id="hdr-num">001</div>
       <div class="hdr-lbl">próxima</div>
+      <button class="btn-sair" onclick="sair()">Sair ↩</button>
     </div>
   </div>
 
@@ -209,12 +347,19 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
       <div class="hero">
         <div class="hero-lbl">Senha Atual</div>
         <div class="hero-num empty" id="hero-num">—</div>
-        <div class="hero-stats"><strong id="hero-total">0</strong> emitidas · última: <strong id="hero-ultima">nenhuma</strong></div>
+        <div class="hero-stats">
+          <strong id="hero-total">0</strong> emitidas · última: <strong id="hero-ultima">nenhuma</strong>
+        </div>
       </div>
+
       <div class="last-card" id="last-card">
         <div class="last-num" id="last-num">000</div>
-        <div><div class="last-name" id="last-name">—</div><div class="last-sub">Senha emitida agora ✓</div></div>
+        <div>
+          <div class="last-name" id="last-name">—</div>
+          <div class="last-sub">Senha emitida agora ✓</div>
+        </div>
       </div>
+
       <div class="inp-group" id="inp-group">
         <div class="inp-row">
           <div class="inp-ico">👤</div>
@@ -225,6 +370,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
           <input id="inp-obs" type="text" placeholder="Observação (opcional)" autocomplete="off">
         </div>
       </div>
+
       <button class="btn-emit" id="btn-emit" onclick="emitir()">Emitir Próxima Senha →</button>
       <button class="btn-reset-link" onclick="abrirReset()">Reiniciar contagem</button>
     </div>
@@ -242,10 +388,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
         </div>
       </div>
       <div class="filters">
-        <div class="chip on" id="chip-todos"      onclick="filtrar('todos',this)">Todos</div>
-        <div class="chip"   id="chip-aguardando"  onclick="filtrar('aguardando',this)">Aguardando</div>
-        <div class="chip"   id="chip-chamado"     onclick="filtrar('chamado',this)">Chamado</div>
-        <div class="chip"   id="chip-concluido"   onclick="filtrar('concluido',this)">Concluído</div>
+        <div class="chip on" id="chip-todos"     onclick="filtrar('todos',this)">Todos</div>
+        <div class="chip"   id="chip-aguardando" onclick="filtrar('aguardando',this)">Aguardando</div>
+        <div class="chip"   id="chip-chamado"    onclick="filtrar('chamado',this)">Chamado</div>
+        <div class="chip"   id="chip-concluido"  onclick="filtrar('concluido',this)">Concluído</div>
       </div>
       <div class="queue-list" id="queue-list"></div>
     </div>
@@ -254,10 +400,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
     <div class="screen" id="sc-relatorio">
       <div class="sc-hdr"><div class="sc-title">Relatório</div></div>
       <div class="rel-stats">
-        <div class="stat-card"><div class="stat-val" id="st-total" style="color:var(--ink)">0</div><div class="stat-lbl">Total</div></div>
-        <div class="stat-card"><div class="stat-val" id="st-wait" style="color:var(--blue)">0</div><div class="stat-lbl">Aguardando</div></div>
+        <div class="stat-card"><div class="stat-val" id="st-total"  style="color:var(--ink)">0</div><div class="stat-lbl">Total</div></div>
+        <div class="stat-card"><div class="stat-val" id="st-wait"   style="color:var(--blue)">0</div><div class="stat-lbl">Aguardando</div></div>
         <div class="stat-card"><div class="stat-val" id="st-called" style="color:var(--amber)">0</div><div class="stat-lbl">Chamados</div></div>
-        <div class="stat-card"><div class="stat-val" id="st-done" style="color:var(--green)">0</div><div class="stat-lbl">Concluídos</div></div>
+        <div class="stat-card"><div class="stat-val" id="st-done"   style="color:var(--green)">0</div><div class="stat-lbl">Concluídos</div></div>
       </div>
       <div class="rel-actions">
         <button class="btn-rel primary" onclick="exportarCSV()">📥 Exportar CSV</button>
@@ -301,7 +447,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
     <div class="m-handle"></div>
     <div class="m-title">Remover da Fila?</div>
     <p style="font-size:14px;color:var(--ink2);margin-bottom:20px;line-height:1.6">
-      A senha <strong id="rm-num"></strong> de <strong id="rm-nome"></strong> será removida permanentemente do banco de dados.
+      A senha <strong id="rm-num"></strong> de <strong id="rm-nome"></strong> será removida permanentemente.
     </p>
     <button class="m-btn m-danger" onclick="excluirItem()">Sim, remover</button>
     <button class="m-btn m-cancel" onclick="fecharRemover()">Cancelar</button>
@@ -314,9 +460,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
     <div class="m-handle"></div>
     <div class="m-title">Reiniciar Contagem?</div>
     <p style="font-size:14px;color:var(--ink2);margin-bottom:20px;line-height:1.6">
-      Vai zerar o contador e apagar <strong>toda a fila</strong> do banco de dados. Esta ação não pode ser desfeita.
+      Vai zerar o contador e apagar <strong>toda a sua fila</strong>. Esta ação não pode ser desfeita.
     </p>
-    <button class="m-btn m-danger" onclick="executarReset()">Sim, reiniciar do zero</button>
+    <button class="m-btn m-danger" onclick="executarReset()">Sim, reiniciar</button>
     <button class="m-btn m-cancel" onclick="fecharReset()">Cancelar</button>
   </div>
 </div>
@@ -324,35 +470,36 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 <!-- LOADING -->
 <div class="loading-overlay" id="loading">
   <div class="spinner"></div>
-  <div class="loading-txt" id="loading-txt">Conectando...</div>
-</div>
-
-<!-- INSTALL BANNER -->
-<div class="install-banner" id="install-banner">
-  <div class="ib-row">
-    <div class="ib-info">
-      <div class="ib-logo">#</div>
-      <div><div style="font-weight:700;font-size:14px">Instalar app</div><div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:1px">Adicionar à Tela Inicial</div></div>
-    </div>
-    <button class="ib-close" onclick="fecharBanner()">×</button>
-  </div>
-  <div class="ib-steps">1. Toque em <strong>Compartilhar ⬆</strong> no Safari<br>2. Role e toque em <strong>"Adicionar à Tela Inicial"</strong><br>3. Confirme e abra pelo ícone</div>
+  <div class="loading-txt" id="loading-txt">Carregando...</div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ─── SUPABASE ───
+// ═══════════════════════════════════════
+// SUPABASE
+// ═══════════════════════════════════════
 const SURL = 'https://mcohkhxtzzhtgvhlnhel.supabase.co';
 const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jb2hraHh0enpodGd2aGxuaGVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDAxMjksImV4cCI6MjA4OTg3NjEyOX0.M2YKcqIOczumEARmG8a3BzLzEp2GOtz8e_skG_KE2SE';
 const sb = supabase.createClient(SURL, SKEY);
 
-// ─── STATE ───
-let fila = [], contador = 1, filtroAtivo = 'todos', buscaAtiva = '';
-let editandoId = null, editandoItem = null, statusEdit = 'aguardando';
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let currentUser  = null;
+let fila         = [];
+let contador     = 1;
+let filtroAtivo  = 'todos';
+let buscaAtiva   = '';
+let editandoId   = null;
+let editandoItem = null;
+let statusEdit   = 'aguardando';
+let abaAtiva     = 'entrar';
 
-// ─── UTILS ───
+// ═══════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════
 function pad(n){ return String(n).padStart(3,'0'); }
 function hora(){ return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -361,38 +508,146 @@ let toastT;
 function toast(m){
   const el=document.getElementById('toast');
   el.textContent=m; el.classList.add('show');
-  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2400);
+  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2500);
 }
 
 function loading(show,txt){
   const el=document.getElementById('loading');
-  if(show){ document.getElementById('loading-txt').textContent=txt||'Carregando...'; el.classList.remove('hide'); }
-  else el.classList.add('hide');
+  document.getElementById('loading-txt').textContent=txt||'Carregando...';
+  if(show) el.classList.remove('hide'); else el.classList.add('hide');
 }
 
-// ─── CARREGAR DADOS ───
-async function carregarDados(){
-  loading(true,'Conectando ao banco...');
+function erroLogin(msg){
+  const el=document.getElementById('login-erro');
+  el.textContent=msg; el.classList.add('show');
+}
+function limparErro(){ document.getElementById('login-erro').classList.remove('show'); }
+
+// ═══════════════════════════════════════
+// LOGIN — ABAS
+// ═══════════════════════════════════════
+function mudarAba(aba){
+  abaAtiva=aba;
+  document.getElementById('tab-entrar').className='login-tab'+(aba==='entrar'?' on':'');
+  document.getElementById('tab-criar').className='login-tab'+(aba==='criar'?' on':'');
+  document.getElementById('inp-senha2').style.display=aba==='criar'?'block':'none';
+  document.getElementById('btn-login').textContent=aba==='entrar'?'Entrar':'Criar Conta';
+  document.getElementById('inp-senha').autocomplete=aba==='entrar'?'current-password':'new-password';
+  limparErro();
+}
+
+// ═══════════════════════════════════════
+// LOGIN — AUTENTICAR
+// ═══════════════════════════════════════
+async function autenticar(){
+  const email=document.getElementById('inp-email').value.trim();
+  const senha=document.getElementById('inp-senha').value;
+  const senha2=document.getElementById('inp-senha2').value;
+  limparErro();
+
+  if(!email||!senha){ erroLogin('Preencha e-mail e senha.'); return; }
+  if(abaAtiva==='criar'&&senha!==senha2){ erroLogin('As senhas não coincidem.'); return; }
+  if(abaAtiva==='criar'&&senha.length<6){ erroLogin('A senha deve ter pelo menos 6 caracteres.'); return; }
+
+  const btn=document.getElementById('btn-login');
+  btn.disabled=true; btn.textContent='Aguarde...';
+
   try{
-    const {data:cfg} = await sb.from('config').select('valor').eq('chave','contador').single();
-    if(cfg) contador=parseInt(cfg.valor)||1;
-    const {data:rows,error} = await sb.from('senhas').select('*').order('num_int',{ascending:true});
+    let result;
+    if(abaAtiva==='entrar'){
+      result=await sb.auth.signInWithPassword({email,password:senha});
+    } else {
+      result=await sb.auth.signUp({email,password:senha});
+      if(result.data?.user&&!result.error){
+        // Conta criada — tentar login imediato
+        if(result.data.session){
+          // confirmação de email desativada — já logado
+        } else {
+          erroLogin('Conta criada! Verifique seu e-mail para confirmar, depois faça login.');
+          btn.disabled=false; btn.textContent='Criar Conta'; return;
+        }
+      }
+    }
+    if(result.error) throw result.error;
+    // sucesso — onAuthStateChange cuida do resto
+  }catch(e){
+    const msgs={
+      'Invalid login credentials':'E-mail ou senha incorretos.',
+      'Email not confirmed':'Confirme seu e-mail antes de entrar.',
+      'User already registered':'Este e-mail já tem uma conta. Faça login.',
+    };
+    erroLogin(msgs[e.message]||e.message||'Erro ao autenticar.');
+    btn.disabled=false;
+    btn.textContent=abaAtiva==='entrar'?'Entrar':'Criar Conta';
+  }
+}
+
+// ═══════════════════════════════════════
+// AUTH STATE
+// ═══════════════════════════════════════
+sb.auth.onAuthStateChange(async (event, session)=>{
+  if(session?.user){
+    currentUser=session.user;
+    await iniciarApp();
+  } else {
+    currentUser=null;
+    document.getElementById('tela-login').classList.remove('hide');
+    loading(false);
+  }
+});
+
+// ═══════════════════════════════════════
+// INICIAR APP PÓS-LOGIN
+// ═══════════════════════════════════════
+async function iniciarApp(){
+  loading(true,'Carregando sua fila...');
+  try{
+    // Carregar ou criar config do usuário
+    let {data:cfg}=await sb.from('config').select('contador').eq('user_id',currentUser.id).single();
+    if(!cfg){
+      await sb.from('config').insert({user_id:currentUser.id,contador:1});
+      contador=1;
+    } else {
+      contador=cfg.contador||1;
+    }
+
+    // Carregar senhas
+    const {data:rows,error}=await sb.from('senhas').select('*')
+      .eq('user_id',currentUser.id).order('num_int',{ascending:true});
     if(error) throw error;
     fila=rows||[];
+
+    // Atualizar UI
+    document.getElementById('app-email-label').textContent=currentUser.email;
+    document.getElementById('tela-login').classList.add('hide');
+    document.getElementById('inp-email').value='';
+    document.getElementById('inp-senha').value='';
+    document.getElementById('inp-senha2').value='';
+    document.getElementById('btn-login').disabled=false;
+    document.getElementById('btn-login').textContent='Entrar';
     atualizarEmitirUI();
     renderFila();
+    goTo('emitir');
   }catch(e){
-    toast('⚠️ Erro de conexão. Verifique o Supabase.');
-    console.error(e);
+    toast('❌ Erro ao carregar dados.'); console.error(e);
   }
   loading(false);
 }
 
 async function salvarContador(){
-  await sb.from('config').upsert({chave:'contador',valor:String(contador)});
+  await sb.from('config').update({contador}).eq('user_id',currentUser.id);
 }
 
-// ─── NAV ───
+async function sair(){
+  await sb.auth.signOut();
+  fila=[]; contador=1; currentUser=null;
+  document.getElementById('tela-login').classList.remove('hide');
+  mudarAba('entrar');
+}
+
+// ═══════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════
 function goTo(tab){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
@@ -402,10 +657,12 @@ function goTo(tab){
   if(tab==='relatorio') renderRelatorio();
 }
 
-// ─── EMITIR ───
+// ═══════════════════════════════════════
+// EMITIR
+// ═══════════════════════════════════════
 async function emitir(){
   const nome=document.getElementById('inp-nome').value.trim();
-  const obs=document.getElementById('inp-obs').value.trim();
+  const obs =document.getElementById('inp-obs').value.trim();
   if(!nome){
     const g=document.getElementById('inp-group');
     g.classList.add('err'); setTimeout(()=>g.classList.remove('err'),1000);
@@ -413,12 +670,14 @@ async function emitir(){
   }
   const btn=document.getElementById('btn-emit');
   btn.disabled=true; btn.textContent='Emitindo...';
-  const item={num:pad(contador),num_int:contador,nome,obs,status:'aguardando',hora:hora()};
+
+  const item={user_id:currentUser.id,num:pad(contador),num_int:contador,nome,obs,status:'aguardando',hora:hora()};
   try{
     const {data,error}=await sb.from('senhas').insert(item).select().single();
     if(error) throw error;
     contador++; await salvarContador();
     fila.push(data); fila.sort((a,b)=>b.num_int-a.num_int);
+
     document.getElementById('hero-num').textContent=data.num;
     document.getElementById('hero-num').classList.remove('empty');
     document.getElementById('hero-total').textContent=fila.length;
@@ -434,12 +693,14 @@ async function emitir(){
     setTimeout(()=>{ btn.textContent='Emitir Próxima Senha →'; btn.classList.remove('ok'); btn.disabled=false; },1800);
     toast('✅ Senha '+data.num+' → '+nome.split(' ')[0]);
   }catch(e){
-    toast('❌ Erro ao emitir senha.'); console.error(e);
+    toast('❌ Erro ao emitir.'); console.error(e);
     btn.textContent='Emitir Próxima Senha →'; btn.disabled=false;
   }
 }
 
-// ─── FILA ───
+// ═══════════════════════════════════════
+// FILA
+// ═══════════════════════════════════════
 function renderFila(){
   document.getElementById('fila-count').textContent=fila.length;
   const el=document.getElementById('queue-list');
@@ -463,11 +724,12 @@ function renderFila(){
     '</div>'
   ).join('');
 }
-
 function filtrar(f,el){ filtroAtivo=f; document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); renderFila(); }
 function buscar(q){ buscaAtiva=q; renderFila(); }
 
-// ─── RELATÓRIO ───
+// ═══════════════════════════════════════
+// RELATÓRIO
+// ═══════════════════════════════════════
 function renderRelatorio(){
   document.getElementById('st-total').textContent=fila.length;
   document.getElementById('st-wait').textContent=fila.filter(i=>i.status==='aguardando').length;
@@ -485,7 +747,6 @@ function renderRelatorio(){
   ).join('');
 }
 
-// ─── EXPORTAR CSV ───
 function exportarCSV(){
   if(!fila.length){ toast('⚠️ Nenhuma senha para exportar'); return; }
   const linhas=[['Senha','Nome','Observação','Status','Hora'].join(';'),
@@ -493,30 +754,31 @@ function exportarCSV(){
   const blob=new Blob(['\uFEFF'+linhas.join('\n')],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a'); a.href=url;
-  a.download='controle-fila-'+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')+'.csv';
+  a.download='fila-'+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')+'.csv';
   a.click(); URL.revokeObjectURL(url); toast('📥 CSV exportado!');
 }
 
-// ─── IMPRIMIR ───
 function imprimirRelatorio(){
   if(!fila.length){ toast('⚠️ Nenhuma senha para imprimir'); return; }
   const bl={aguardando:'Aguardando',chamado:'Chamado',concluido:'Concluído'};
   const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
   const rows=[...fila].sort((a,b)=>a.num_int-b.num_int).map(i=>
     '<tr><td>'+i.num+'</td><td>'+esc(i.nome)+'</td><td>'+esc(i.obs||'—')+'</td><td>'+bl[i.status]+'</td><td>'+i.hora+'</td></tr>').join('');
-  const t=fila.length, w=fila.filter(i=>i.status==='aguardando').length,
-        c=fila.filter(i=>i.status==='chamado').length, d=fila.filter(i=>i.status==='concluido').length;
+  const t=fila.length,w=fila.filter(i=>i.status==='aguardando').length,
+        c=fila.filter(i=>i.status==='chamado').length,d=fila.filter(i=>i.status==='concluido').length;
   const win=window.open('','_blank');
-  win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Relatório — Controle de Fila</title><style>body{font-family:sans-serif;color:#111;padding:32px;max-width:860px;margin:0 auto}h1{font-size:24px;margin-bottom:4px}.sub{font-size:13px;color:#666;margin-bottom:24px}.stats{display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap}.stat{background:#f1f5f9;border-radius:10px;padding:14px 18px;min-width:100px}.stat strong{font-size:28px;display:block}.stat span{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.5px}table{width:100%;border-collapse:collapse;font-size:14px}th{background:#0f172a;color:white;padding:10px 12px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.5px}td{padding:10px 12px;border-bottom:1px solid #e2e8f0}tr:nth-child(even)td{background:#f8fafc}@media print{button{display:none}}</style></head><body>'+
-    '<h1>Controle de Fila</h1><div class="sub">Relatório gerado em '+hoje+' · '+t+' senhas</div>'+
+  win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Relatório — Controle de Fila</title>'+
+    '<style>body{font-family:sans-serif;color:#111;padding:32px;max-width:860px;margin:0 auto}h1{font-size:24px;margin-bottom:4px}.sub{font-size:13px;color:#666;margin-bottom:24px}.stats{display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap}.stat{background:#f1f5f9;border-radius:10px;padding:14px 18px}.stat strong{font-size:28px;display:block}.stat span{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.5px}table{width:100%;border-collapse:collapse;font-size:14px}th{background:#0f172a;color:white;padding:10px 12px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.5px}td{padding:10px 12px;border-bottom:1px solid #e2e8f0}tr:nth-child(even)td{background:#f8fafc}@media print{button{display:none}}</style></head><body>'+
+    '<h1>Controle de Fila</h1><div class="sub">'+currentUser.email+' · '+hoje+' · '+t+' senhas</div>'+
     '<div class="stats"><div class="stat"><strong>'+t+'</strong><span>Total</span></div><div class="stat"><strong style="color:#2563eb">'+w+'</strong><span>Aguardando</span></div><div class="stat"><strong style="color:#d97706">'+c+'</strong><span>Chamados</span></div><div class="stat"><strong style="color:#059669">'+d+'</strong><span>Concluídos</span></div></div>'+
     '<table><thead><tr><th>Senha</th><th>Nome</th><th>Observação</th><th>Status</th><th>Hora</th></tr></thead><tbody>'+rows+'</tbody></table>'+
-    '<br><button onclick="window.print()" style="background:#0f172a;color:white;border:none;padding:12px 24px;border-radius:8px;font-size:14px;cursor:pointer;margin-top:16px">🖨️ Imprimir</button>'+
-    '</body></html>');
+    '<br><button onclick="window.print()" style="background:#0f172a;color:white;border:none;padding:12px 24px;border-radius:8px;font-size:14px;cursor:pointer;margin-top:16px">🖨️ Imprimir</button></body></html>');
   win.document.close();
 }
 
-// ─── MODAL EDITAR ───
+// ═══════════════════════════════════════
+// MODAL EDITAR
+// ═══════════════════════════════════════
 function abrirEdit(id){
   editandoId=id; editandoItem=fila.find(i=>String(i.id)===String(id));
   if(!editandoItem) return;
@@ -530,8 +792,7 @@ function selStatus(s){ statusEdit=s; atualizarBotoesStatus(); }
 function atualizarBotoesStatus(){
   const map={aguardando:'sa',chamado:'sc',concluido:'sd'};
   ['aguardando','chamado','concluido'].forEach(s=>{
-    const b=document.getElementById('sopt-'+s);
-    b.className='s-opt'+(statusEdit===s?' '+map[s]:'');
+    document.getElementById('sopt-'+s).className='s-opt'+(statusEdit===s?' '+map[s]:'');
   });
 }
 async function salvarStatus(){
@@ -546,7 +807,9 @@ async function salvarStatus(){
   loading(false);
 }
 
-// ─── REMOVER ───
+// ═══════════════════════════════════════
+// REMOVER
+// ═══════════════════════════════════════
 function confirmarRemocao(){
   fecharEdit();
   const item=fila.find(i=>String(i.id)===String(editandoId));
@@ -556,7 +819,6 @@ function confirmarRemocao(){
   document.getElementById('modal-remover').classList.add('open');
 }
 function fecharRemover(){ document.getElementById('modal-remover').classList.remove('open'); }
-
 async function excluirItem(){
   fecharRemover(); loading(true,'Removendo...');
   try{
@@ -567,7 +829,6 @@ async function excluirItem(){
   }catch(e){ toast('❌ Erro ao remover'); console.error(e); }
   loading(false);
 }
-
 function removerRapido(id){
   editandoId=id; editandoItem=fila.find(i=>String(i.id)===String(id));
   if(!editandoItem) return;
@@ -576,13 +837,15 @@ function removerRapido(id){
   document.getElementById('modal-remover').classList.add('open');
 }
 
-// ─── RESET ───
+// ═══════════════════════════════════════
+// RESET
+// ═══════════════════════════════════════
 function abrirReset(){ document.getElementById('modal-reset').classList.add('open'); }
 function fecharReset(){ document.getElementById('modal-reset').classList.remove('open'); }
 async function executarReset(){
   fecharReset(); loading(true,'Reiniciando...');
   try{
-    await sb.from('senhas').delete().gte('num_int',0);
+    await sb.from('senhas').delete().eq('user_id',currentUser.id);
     contador=1; await salvarContador(); fila=[];
     document.getElementById('hero-num').textContent='—';
     document.getElementById('hero-num').classList.add('empty');
@@ -595,7 +858,9 @@ async function executarReset(){
   loading(false);
 }
 
-// ─── ATUALIZAR UI EMITIR ───
+// ═══════════════════════════════════════
+// ATUALIZAR UI EMITIR
+// ═══════════════════════════════════════
 function atualizarEmitirUI(){
   document.getElementById('hero-total').textContent=fila.length;
   document.getElementById('hdr-num').textContent=pad(contador);
@@ -604,29 +869,32 @@ function atualizarEmitirUI(){
     document.getElementById('hero-num').textContent=u.num;
     document.getElementById('hero-num').classList.remove('empty');
     document.getElementById('hero-ultima').textContent=u.nome.split(' ')[0];
-  } else {
+  }else{
     document.getElementById('hero-num').textContent='—';
     document.getElementById('hero-num').classList.add('empty');
     document.getElementById('hero-ultima').textContent='nenhuma';
   }
 }
 
-// ─── FECHAR MODAIS PELO FUNDO ───
+// ═══════════════════════════════════════
+// FECHAR MODAIS PELO FUNDO
+// ═══════════════════════════════════════
 ['modal-edit','modal-remover','modal-reset'].forEach(id=>{
   document.getElementById(id).addEventListener('click',function(e){ if(e.target===this) this.classList.remove('open'); });
 });
 
-// ─── INSTALL BANNER ───
-function fecharBanner(){ document.getElementById('install-banner').classList.remove('show'); try{localStorage.setItem('cf_b','1');}catch(e){} }
-(function(){
-  try{
-    const ios=/iphone|ipad|ipod/i.test(navigator.userAgent.toLowerCase());
-    const sa=window.navigator.standalone===true;
-    if(ios&&!sa&&!localStorage.getItem('cf_b')) document.getElementById('install-banner').classList.add('show');
-  }catch(e){}
-})();
+// ═══════════════════════════════════════
+// ENTER NOS INPUTS
+// ═══════════════════════════════════════
+document.getElementById('inp-email').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('inp-senha').focus(); });
+document.getElementById('inp-senha').addEventListener('keydown',e=>{ if(e.key==='Enter'){ if(abaAtiva==='criar') document.getElementById('inp-senha2').focus(); else autenticar(); }});
+document.getElementById('inp-senha2').addEventListener('keydown',e=>{ if(e.key==='Enter') autenticar(); });
+document.getElementById('inp-nome').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('inp-obs').focus(); });
+document.getElementById('inp-obs').addEventListener('keydown',e=>{ if(e.key==='Enter') emitir(); });
 
-// ─── ÍCONE PWA ───
+// ═══════════════════════════════════════
+// ÍCONE PWA
+// ═══════════════════════════════════════
 (function(){
   try{
     const c=document.createElement('canvas'); c.width=180; c.height=180;
@@ -643,16 +911,16 @@ function fecharBanner(){ document.getElementById('install-banner').classList.rem
   }catch(e){}
 })();
 
-// ─── RELÓGIO ───
+// ═══════════════════════════════════════
+// RELÓGIO
+// ═══════════════════════════════════════
 function tick(){ const d=new Date(),el=document.getElementById('sb-time'); if(el) el.textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
 tick(); setInterval(tick,10000);
 
-// ─── ENTER NOS INPUTS ───
-document.getElementById('inp-nome').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('inp-obs').focus(); });
-document.getElementById('inp-obs').addEventListener('keydown',e=>{ if(e.key==='Enter') emitir(); });
-
-// ─── INIT ───
-carregarDados();
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+loading(false);
 </script>
 </body>
 </html>
